@@ -1599,7 +1599,7 @@ def run_smartbrain_ui():
 
                     try:
                         resp = requests.post(
-                            f"{BACKEND_URL}/ai/commentary",
+                            f"{BACKEND_URL}/api/commentary",
                             json={"kpi_payload": safe_payload},
                             timeout=120
                         )
@@ -1758,7 +1758,7 @@ def run_smartbrain_ui():
                 
                     # Send request to backend AI engine
                     spend_resp = requests.post(
-                         f"{BACKEND_URL}/ai/spend",
+                         f"{BACKEND_URL}/api/spend",
                         json={
                             "channel_table": channel_table,
                             "platform_fees": platform_fees,
