@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.services.ai_engine import generate_commentary, generate_spend_guidance
 import numpy as np
 
-router = APIRouter(prefix="/ai", tags=["ai"])
+router = APIRouter(prefix="/api", tags=["api"])   # UPDATED PREFIX + TAG
 
 def make_json_safe(obj):
     """Recursively convert numpy + non-serializable objects to JSON-safe types."""
@@ -19,18 +19,29 @@ def make_json_safe(obj):
     else:
         return obj
 
+# ------------------------------
+# COMMENTARY ROUTE (PATCHED)
+# ------------------------------
 @router.post("/commentary")
 async def commentary_route(payload: dict):
     raw_kpi = payload.get("kpi_payload", {})
-    safe_kpi = make_json_safe(raw_kpi)   # << THE FIX
+    safe_kpi = make_json_safe(raw_kpi)
     result = await generate_commentary(safe_kpi)
     return result
 
+# ------------------------------
+# SPEND GUIDANCE ROUTE
+# ------------------------------
 @router.post("/spend")
 async def spend_route(payload: dict):
     channel_table = payload.get("channel_table", [])
     platform_fees = payload.get("platform_fees", {})
     gross_margin = payload.get("gross_margin", None)
 
-    result = await generate_spend_guidance(channel_table, platform_fees, gross_margin)
+    result = await generate_spend_guidance(
+        channel_table,
+        platform_fees,
+        gross_margin
+    )
+
     return result
