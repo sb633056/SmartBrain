@@ -6,21 +6,28 @@ from app.routers import kpi, auth, health, ai, async_jobs
 app = FastAPI(title="SmartBrain Production API")
 
 # ------------------------------------------
-# CORS & Middleware (as you had it)
+# CORS (Set to production-only domain later)
 # ------------------------------------------
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    CORSMiddleware,
+    allow_origins=["*"], # ⚠️ FOUNDER NOTE: Change this to your live frontend URL before launch!
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
+# ------------------------------------------
+# CLOUDFLARE-SAFE MIDDLEWARE
+# ------------------------------------------
 @app.middleware("http")
 async def add_security_headers(request, call_next):
-    request.scope["headers"].append((b"user-agent", b"SmartBrainClient"))
-    response = await call_next(request)
-    response.headers["X-Requested-With"] = "SmartBrainFrontend"
-    return response
+    # Add user-agent so Cloudflare doesn't block the request
+    request.scope["headers"].append((b"user-agent", b"SmartBrainClient"))
+
+    response = await call_next(request)
+
+    # Add a frontend-identifying header (Cloudflare whitelists "X-Requested-With")
+    response.headers["X-Requested-With"] = "SmartBrainFrontend"
+    return response
 
 # ------------------------------------------
 # Routers
