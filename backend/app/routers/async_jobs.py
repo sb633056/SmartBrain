@@ -1,19 +1,17 @@
-# app/routers/async_jobs.py (NEW FILE)
-
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 import uuid
 import hashlib
 import json
-import os # Ensure you have os imported for environment variable access
+import os # Necessary for accessing the REDIS_URL environment variable
+# ⚠️ Add imports for Redis/RQ when you implement the worker
+# from redis import Redis
+# from rq import Queue
 
 router = APIRouter(
     prefix="/analyze",
     tags=["analysis_jobs"],
 )
-
-# ⚠️ DEPENDENCIES: You will need to install 'rq' (Redis Queue) and set up
-# a Redis server instance on Render for this to work correctly.
 
 def calculate_file_hash(file_content: bytes) -> str:
     """Calculates SHA256 hash of the file content for caching."""
@@ -24,7 +22,7 @@ def calculate_file_hash(file_content: bytes) -> str:
 async def submit_analysis_job(file: UploadFile = File(...)):
     """
     Accepts file upload, returns a Job ID immediately.
-    This replaces the original /analyze/file endpoint from your KPI router.
+    This replaces the original blocking file analysis endpoint.
     """
     try:
         file_content = await file.read()
@@ -44,15 +42,14 @@ async def submit_analysis_job(file: UploadFile = File(...)):
         # 2. 🛡️ CRITICAL ASYNC STEP: Submit to Worker Queue (Prevents Timeouts)
         # -------------------------------------------------------------
         # ⚠️ Placeholder: Submit 'file_content' and 'job_id' to your background worker (e.g., RQ).
-        # Example: worker_queue.enqueue(run_full_analysis_task, file_content, job_id, file_hash)
         # The worker must then call your original KPI processing functions.
+        # Example: worker_queue.enqueue(run_full_analysis_task, file_content, job_id, file_hash)
         # -------------------------------------------------------------
 
         # Returns immediately: The client can now start polling.
         return JSONResponse(content={"status": "pending", "job_id": job_id})
 
     except Exception as e:
-        # Founder-grade error handling: log detailed error, but return generic one.
         print(f"Error during job submission: {e}")
         raise HTTPException(status_code=500, detail=f"Job submission failed. Please check backend logs.")
 
