@@ -1,25 +1,20 @@
-# Your Main App File (e.g., main.py or app.py) - MODIFIED
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-# IMPORTANT: Import the new async router
+# IMPORTANT: Import the new async_jobs router
 from app.routers import kpi, auth, health, ai, async_jobs 
 
 app = FastAPI(title="SmartBrain Production API")
 
 # ------------------------------------------
-# CORS (Set to production-only domain later)
+# CORS & Middleware (as you had it)
 # ------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # ⚠️ FOUNDER NOTE: Change this to your live frontend URL before launch!
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ------------------------------------------
-# CLOUDFLARE-SAFE MIDDLEWARE (kept your patch)
-# ------------------------------------------
 @app.middleware("http")
 async def add_security_headers(request, call_next):
     request.scope["headers"].append((b"user-agent", b"SmartBrainClient"))
