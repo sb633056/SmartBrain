@@ -32,8 +32,9 @@ export default function ChatConsole({ kpiData }: ChatConsoleProps) {
       // If your runSmartBrain function needs kpiData, you would pass it here:
       // const res = await runSmartBrain(prompt, kpiData) 
       const res = await runSmartBrain(prompt, kpiData)
-      setOutput(res)
-      setHistory((h) => [{ q: prompt, a: res }, ...h])
+      const outputText = JSON.stringify(res, null, 2);
+      setOutput(outputText)
+      setHistory((h) => [{ q: prompt, a: outputText }, ...h])
       setPrompt('')
     } catch (e: any) {
       setOutput(`Error: ${e.message}`)
@@ -84,4 +85,5 @@ export default function ChatConsole({ kpiData }: ChatConsoleProps) {
     </div>
   )
 }
+
 
