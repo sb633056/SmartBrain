@@ -8,6 +8,15 @@ export type Recommendation = {
   'Analyst-confidence rating': 'High' | 'Medium' | 'Low';
 };
 
+export type ExpiryWarning = {
+    sku: string;
+    on_hand: number;
+    shelf_life_days: number;
+    days_of_cover: number;
+    flag: string;
+    potential_writeoff: number;
+};
+
 export type SmartBrainResponse = {
   kpis: {
     financials: {
@@ -18,6 +27,8 @@ export type SmartBrainResponse = {
       AOV: number | null;
       repurchase_rate: number | null;
     };
+
+    expiry_warnings: ExpiryWarning[];
     inventory: {
       inventory_at_risk: number | null;
     };
@@ -29,6 +40,7 @@ export type SmartBrainResponse = {
         roas: number;
       }>;
     };
+    
     // The AI's parsed JSON output (ai_advisor)
     ai_advisor?: {
       'Founder Summary (One Liner)': string;
