@@ -14,8 +14,8 @@ export default function InsightsDashboard({ data }: InsightsDashboardProps) {
   const channelTable = kpis.marketing_attribution.channel_table;
   
   // NOTE: You must ensure your FastAPI endpoint returns the AI data nested under 'ai_advisor' as inferred.
-  const summary = aiAdvisor['Founder Summary (One Liner)'] || "Analysis complete, but founder summary is unavailable.";
-  const recommendations = aiAdvisor['3-Layer Recommendations Framework'];
+  const summary = aiAdvisor?.['Founder Summary (One Liner)'] || "Analysis complete, but founder summary is unavailable.";
+  const recommendations = aiAdvisor?.['3-Layer Recommendations Framework'];
 
   return (
     <div className="space-y-8 p-6 bg-white rounded-xl shadow-2xl">
