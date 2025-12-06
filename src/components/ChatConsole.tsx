@@ -31,7 +31,7 @@ export default function ChatConsole({ kpiData }: ChatConsoleProps) {
     try {
       // If your runSmartBrain function needs kpiData, you would pass it here:
       // const res = await runSmartBrain(prompt, kpiData) 
-      const res = await runSmartBrain(prompt)
+      const res = await runSmartBrain(prompt, kpiData)
       setOutput(res)
       setHistory((h) => [{ q: prompt, a: res }, ...h])
       setPrompt('')
@@ -84,3 +84,4 @@ export default function ChatConsole({ kpiData }: ChatConsoleProps) {
     </div>
   )
 }
+
