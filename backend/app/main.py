@@ -8,9 +8,10 @@ app = FastAPI(title="SmartBrain Production API")
 # ------------------------------------------
 # CORS (Set to production-only domain later)
 # ------------------------------------------
+VERCEL_FRONTEND_URL = "https://smart-brain-red.vercel.app/" 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # ⚠️ FOUNDER NOTE: Change this to your live frontend URL before launch!
+    allow_origins=["VERCEL_FRONTEND_URL"], # ⚠️ FOUNDER NOTE: Change this to your live frontend URL before launch!
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -38,6 +39,7 @@ app.include_router(kpi.router)
 app.include_router(auth.router)
 app.include_router(health.router)
 app.include_router(ai.router)
+
 
 
 
