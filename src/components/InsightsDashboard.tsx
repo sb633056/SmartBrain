@@ -64,7 +64,7 @@ export default function InsightsDashboard({ data }: InsightsDashboardProps) {
         <h3 className="text-xl font-semibold border-b pb-2">Marketing Attribution</h3>
         {channelTable && channelTable.length > 0 ? (
           <DataTable 
-            data={channel_table}
+            data={channelTable}
             title="Channel ROAS Performance"
             // Define your column headers
             columns={['channel', 'spend', 'attributed_revenue', 'roas']}
