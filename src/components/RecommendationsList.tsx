@@ -30,7 +30,7 @@ export default function RecommendationsList({ recommendations }: { recommendatio
           <h3 className="text-xl font-semibold text-indigo-700 mb-3">{tier.title}</h3>
           {recommendations[tier.key]?.map((rec: Recommendation, index: number) => (
             <RecItem key={index} rec={rec} />
-          ))}
+          )) || []}
         </div>
       ))}
     </div>
