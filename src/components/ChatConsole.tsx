@@ -1,89 +1,63 @@
-'use client'
-import React, { useState, useRef } from 'react'
-import { runSmartBrain } from '@/lib/api'
+// src/components/ChatConsole.tsx
 
-// 1. DEFINE THE PROP TYPES (The Fix)
-// ------------------------------------------------------------------
-// This defines the structure of the data the component expects to receive.
-// We use 'any' as a quick fix for KpiData since its full type is unknown.
-type KpiData = any; 
+'use client'
+import React, { useState } from 'react'
+import { runSmartBrain } from '@/lib/api' // Assuming this returns the full JSON payload
+import { SmartBrainResponse } from '@/types/smartbrain' // <--- IMPORT NEW TYPE
+// Import the new components we're about to create
+import InsightsDashboard from './InsightsDashboard' 
 
 interface ChatConsoleProps {
-  kpiData: KpiData;
+  // Use the new type for kpiData prop
+  kpiData: any; 
 }
-// ------------------------------------------------------------------
 
-
-// 2. MODIFY THE COMPONENT SIGNATURE (The Fix)
-// Change from ChatConsole() to ChatConsole({ kpiData }) to accept the prop.
 export default function ChatConsole({ kpiData }: ChatConsoleProps) {
-// ------------------------------------------------------------------
   const [prompt, setPrompt] = useState('')
-  const [output, setOutput] = useState('')
-// ... (rest of the code remains the same)
   const [loading, setLoading] = useState(false)
   const [history, setHistory] = useState<Array<{ q: string; a: string }>>([])
+  // NEW STATE: To store the structured API response object
+  const [analysisResult, setAnalysisResult] = useState<SmartBrainResponse | null>(null)
+
 
   async function handleRun() {
     if (!prompt.trim()) return
     setLoading(true)
+    setAnalysisResult(null); // Clear previous result
 
     try {
-      // If your runSmartBrain function needs kpiData, you would pass it here:
-      // const res = await runSmartBrain(prompt, kpiData) 
-      const res = await runSmartBrain(prompt, kpiData)
-      const outputText = JSON.stringify(res, null, 2);
-      setOutput(outputText)
-      setHistory((h) => [{ q: prompt, a: outputText }, ...h])
+      // runSmartBrain now returns the full structured JSON payload
+      const res: SmartBrainResponse = await runSmartBrain(prompt, kpiData) 
+      
+      // Store the structured response object
+      setAnalysisResult(res)
+      
+      // Update history with a success message, not raw data
+      setHistory((h) => [{ q: prompt, a: 'Analysis Complete. Displaying Founder Insights...' }, ...h])
       setPrompt('')
     } catch (e: any) {
-      setOutput(`Error: ${e.message}`)
+      setAnalysisResult(null);
+      // Use the old output area for errors
+      setHistory((h) => [{ q: prompt, a: `Error: ${e.message}` }, ...h])
     } finally {
       setLoading(false)
     }
   }
+  // ... (rest of the ChatConsole logic)
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Prompt</label>
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          rows={4}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200 p-2"
-          placeholder="Ask SmartBrain anything..."
-        />
-      </div>
+      {/* ... Prompt and Run/Clear buttons here ... */}
 
-      <div className="flex gap-2">
-        <button
-          onClick={handleRun}
-          disabled={loading}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg disabled:opacity-60"
-        >
-          {loading ? 'Thinking…' : 'Run'}
-        </button>
-
-        <button
-          onClick={() => {
-            setPrompt('')
-            setOutput('')
-          }}
-          className="px-4 py-2 border rounded-lg"
-        >
-          Clear
-        </button>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Output</label>
-        <div className="mt-1 rounded-md border p-3 bg-gray-50 whitespace-pre-wrap min-h-[120px]">
-          {output}
-        </div>
-      </div>
+      {analysisResult ? (
+        // RENDER THE NEW DASHBOARD COMPONENT
+        <InsightsDashboard data={analysisResult} />
+      ) : (
+        // Fallback or History Display
+        <div className="...">
+            {/* Display History or initial welcome message */}
+        </div>
+      )}
     </div>
   )
 }
-
-
