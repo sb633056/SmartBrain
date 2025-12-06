@@ -2,7 +2,7 @@
 
 'use client'
 import React, { useState } from 'react'
-import { runSmartBrain } from '@/lib/api' // Assuming this returns the full JSON payload
+import { runSmartBrain } from '../lib/api' // FIX: Use relative path
 import { SmartBrainResponse } from '@/types/smartbrain' // <--- IMPORT NEW TYPE
 // Import the new components we're about to create
 import InsightsDashboard from './InsightsDashboard' 
@@ -63,4 +63,5 @@ export default function ChatConsole({ kpiData }: ChatConsoleProps) {
 }
 // FORCING UNCACHED REDEPLOY
 // Final code change to resolve TypeScript build error.
+
 
