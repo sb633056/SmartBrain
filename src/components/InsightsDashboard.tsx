@@ -11,7 +11,7 @@ export default function InsightsDashboard({ data }: InsightsDashboardProps) {
 
   const kpis = data.kpis;
   const aiAdvisor = kpis.ai_advisor || {};
-  const marketingAttr = kpis.marketing_attribution || {};
+  const channelTable = kpis.marketing_attribution.channel_table;
   
   // NOTE: You must ensure your FastAPI endpoint returns the AI data nested under 'ai_advisor' as inferred.
   const summary = aiAdvisor['Founder Summary (One Liner)'] || "Analysis complete, but founder summary is unavailable.";
@@ -62,7 +62,7 @@ export default function InsightsDashboard({ data }: InsightsDashboardProps) {
       {/* DATA TABLES (MARKETING ATTRIBUTION) */}
       <section className="space-y-3">
         <h3 className="text-xl font-semibold border-b pb-2">Marketing Attribution</h3>
-        {marketingAttr.channel_table ? (
+        {channelTable && channelTable.length > 0 ? (
           <DataTable 
             data={marketingAttr.channel_table} 
             title="Channel ROAS Performance"
